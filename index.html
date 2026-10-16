@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#4a2c17">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A4%A0%3C/text%3E%3C/svg%3E">
+<meta name="description" content="Profe Country — clases de line dance country guiadas por un profe vaquero animado. Baila el Coyote, Cupid Shuffle y más.">
+<title>Profe Country · Clases de line dance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.youtube.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&family=Bitter:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+<div id="app">
+  <!-- ============ PANTALLA INICIO ============ -->
+  <section id="screen-home" class="screen" aria-label="Biblioteca de bailes">
+    <header class="hero">
+      <div class="hero-deco" aria-hidden="true">🌵 ☆ 🤠 ☆ 🌵</div>
+      <h1 class="western">Profe Country</h1>
+      <p class="tagline">Aprende line dance con tu profe vaquero/a. Elige un baile, colócate delante y <strong>¡sigue sus pasos!</strong></p>
+      <div class="hero-actions">
+        <button id="btn-party" class="btn btn-gold btn-big">🎉 Modo fiesta</button>
+        <button id="btn-settings" class="btn btn-wood" aria-label="Ajustes del profe y progreso">⚙️ Ajustes</button>
+      </div>
+      <div id="progress-strip" class="progress-strip" aria-live="polite"></div>
+    </header>
+
+    <main id="contenido" class="dance-grid" aria-label="Bailes disponibles"></main>
+
+    <footer class="home-footer">
+      <p>⌨️ Atajos en clase: <kbd>Espacio</kbd> pausa · <kbd>M</kbd> espejo · <kbd>F</kbd> pantalla completa · <kbd>←</kbd>/<kbd>→</kbd> sección · <kbd>Esc</kbd> salir</p>
+    </footer>
+  </section>
+
+  <!-- ============ PANTALLA CLASE ============ -->
+  <section id="screen-class" class="screen hidden" aria-label="Clase de baile">
+    <div class="class-topbar">
+      <button id="btn-back" class="btn btn-wood btn-icon" aria-label="Volver al inicio">← Salir</button>
+      <div class="class-title">
+        <h2 id="class-title" class="western"></h2>
+        <div class="class-meta">
+          <span id="class-level" class="pill"></span>
+          <span id="class-bpm" class="pill"></span>
+          <span id="class-walls" class="pill"></span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="btn-video" class="btn btn-wood btn-icon" aria-label="Mostrar u ocultar el vídeo de la canción" aria-pressed="false">📺</button>
+        <button id="btn-fullscreen" class="btn btn-wood btn-icon" aria-label="Pantalla completa">⛶</button>
+      </div>
+    </div>
+
+    <div id="stage-wrap" class="stage-wrap">
+      <!-- Escenario -->
+      <div id="stage" class="stage">
+        <div class="stage-backdrop" aria-hidden="true">
+          <div class="bunting"></div>
+          <div class="saloon-sign">SALOON</div>
+          <div class="saloon-doors left"></div>
+          <div class="saloon-doors right"></div>
+        </div>
+
+        <!-- Flechas de dirección -->
+        <div id="floor-arrows" class="floor-arrows" aria-hidden="true"></div>
+
+        <!-- El profe -->
+        <div id="dancer-host" class="dancer-host"></div>
+
+        <!-- Overlays -->
+        <div id="count-overlay" class="count-overlay" aria-hidden="true"></div>
+        <div id="countdown-overlay" class="countdown-overlay" aria-hidden="true"></div>
+        <div class="hud">
+          <div id="wall-badge" class="wall-badge" aria-hidden="true"></div>
+          <div class="move-banner">
+            <div id="section-name" class="section-name"></div>
+            <div id="move-name" class="move-name"></div>
+            <div id="move-next" class="move-next"></div>
+          </div>
+        </div>
+        <div id="party-banner" class="party-banner hidden" aria-live="polite"></div>
+      </div>
+
+      <!-- Panel lateral: ficha / aprender -->
+      <aside id="side-panel" class="side-panel" aria-label="Ficha del baile">
+        <div class="side-tabs" role="tablist" aria-label="Paneles de la ficha">
+          <button id="tab-ficha" class="side-tab active" role="tab" aria-selected="true" aria-controls="panel-ficha">📋 Ficha</button>
+          <button id="tab-learn" class="side-tab" role="tab" aria-selected="false" aria-controls="panel-learn">🎓 Aprender</button>
+        </div>
+        <div id="panel-ficha" class="side-body" role="tabpanel" aria-labelledby="tab-ficha"></div>
+        <div id="panel-learn" class="side-body hidden" role="tabpanel" aria-labelledby="tab-learn"></div>
+      </aside>
+    </div>
+
+    <!-- Controles -->
+    <div class="controls" role="group" aria-label="Controles de la clase">
+      <button id="btn-play" class="btn btn-gold btn-big" aria-label="Reproducir o pausar">▶ Bailar</button>
+      <button id="btn-restart" class="btn btn-wood btn-icon" aria-label="Reiniciar baile">↺</button>
+      <label class="control-labeled">
+        <span>Velocidad</span>
+        <select id="sel-rate">
+          <option value="0.5">0.5× muy lento</option>
+          <option value="0.75" selected>0.75× tranquilo</option>
+          <option value="1">1× normal</option>
+        </select>
+      </label>
+      <label class="control-labeled check">
+        <input type="checkbox" id="chk-mirror" checked>
+        <span>Espejo</span>
+      </label>
+      <label class="control-labeled check">
+        <input type="checkbox" id="chk-loop">
+        <span>Bucle de sección</span>
+      </label>
+      <label class="control-labeled">
+        <span>Compás</span>
+        <span class="offset-controls">
+          <button id="btn-offset-minus" class="btn btn-wood btn-icon" aria-label="Retrasar el compás una décima de segundo">−</button>
+          <span id="offset-value" class="offset-value" translate="no">0.0s</span>
+          <button id="btn-offset-plus" class="btn btn-wood btn-icon" aria-label="Adelantar el compás una décima de segundo">+</button>
+        </span>
+      </label>
+      <div id="music-badge" class="music-badge hidden" aria-live="polite"></div>
+    </div>
+
+    <!-- Reproductor de YouTube (mini) — nunca display:none: algunos navegadores pausan iframes ocultos -->
+    <div id="yt-host" class="yt-host offscreen"><div id="yt-player"></div></div>
+  </section>
+</div>
+
+<!-- Modales -->
+<div id="modal-settings" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+  <div class="modal-card">
+    <h3 id="settings-title" class="western">⚙️ Ajustes</h3>
+    <fieldset>
+      <legend>Tu profe</legend>
+      <div class="avatar-picker" role="group" aria-label="Elegir profe">
+        <button id="pick-vaquero" class="avatar-btn" aria-pressed="false">🤠 Vaquero</button>
+        <button id="pick-vaquera" class="avatar-btn" aria-pressed="false">🐮 Vaquera</button>
+      </div>
+      <div class="swatches" id="swatch-hat" role="group" aria-label="Color del sombrero"></div>
+      <div class="swatches" id="swatch-shirt" role="group" aria-label="Color de la camisa"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Preferencias</legend>
+      <label class="control-labeled check">
+        <input type="checkbox" id="chk-mirror-default" checked>
+        <span>Empezar siempre en modo espejo</span>
+      </label>
+    </fieldset>
+    <div class="modal-actions">
+      <button id="btn-reset-progress" class="btn btn-danger">🗑️ Borrar progreso</button>
+      <button id="btn-close-settings" class="btn btn-gold">Hecho</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-diploma" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="diploma-title">
+  <div class="modal-card diploma">
+    <div class="diploma-emoji" aria-hidden="true">🏆</div>
+    <h3 id="diploma-title" class="western">¡Vaquero/a de Oro!</h3>
+    <p>Has bailado los 8 bailes. La pista es tuya: <strong>¡yeehaw!</strong> 🐎</p>
+    <button id="btn-close-diploma" class="btn btn-gold">¡Gracias!</button>
+  </div>
+</div>
+
+<div id="modal-confirm" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+  <div class="modal-card">
+    <h3 id="confirm-title" class="western">¿Seguro?</h3>
+    <p id="confirm-text">Se borrará tu progreso para siempre.</p>
+    <div class="modal-actions">
+      <button id="btn-confirm-cancel" class="btn btn-wood">Cancelar</button>
+      <button id="btn-confirm-ok" class="btn btn-danger">Sí, borrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Scripts (clásicos para funcionar también con doble clic en file://) -->
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="js/moves.js"></script>
+<script src="js/dancer.js"></script>
+<script src="js/dances.js"></script>
+<script src="js/music.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/learn.js"></script>
+<script src="js/party.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
